@@ -4,15 +4,15 @@ dot.config();
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import http from "http";
+// import http from "http";
 import connect from "./database/conn.js";
 import router from "./router/route.js";
-import { Server } from "socket.io";
+// import { Server } from "socket.io";
 
 const app = express();
 
-const httpServer = http.createServer(app);
-const io = new Server(httpServer, { cors: { origin: "*" } });
+// const httpServer = http.createServer(app);
+// const io = new Server(httpServer, { cors: { origin: "*" } });
 
 /** middlewares */
 app.use(express.json());
@@ -32,19 +32,19 @@ app.get("/", (req, res) => {
 /** api routes */
 app.use("/api", router);
 
-io.on("connection", (socket) => {
-  console.log("Connection established");
+// io.on("connection", (socket) => {
+//   console.log("Connection established");
 
-  getApiAndEmit(socket);
-  socket.on("disconnect", () => {
-    console.log("Disconnected");
-  });
-});
+//   getApiAndEmit(socket);
+//   socket.on("disconnect", () => {
+//     console.log("Disconnected");
+//   });
+// });
 
-const getApiAndEmit = (socket) => {
-  const response = "response you need";
-  socket.emit("FromAPI", response);
-};
+// const getApiAndEmit = (socket) => {
+//   const response = "response you need";
+//   socket.emit("FromAPI", response);
+// };
 
 /** start server only when we have valid connection */
 connect()
