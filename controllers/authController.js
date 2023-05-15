@@ -62,7 +62,7 @@ export async function register(req, res) {
         .then((hashedPassword) => {
           const user = new User({
             password: hashedPassword,
-            email: email,
+            email,
           });
 
           // return save result as a response
