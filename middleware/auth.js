@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 /** auth middleware */
 export default async function Auth(req, res, next){
     try {
-        
+        const {type} = req.body;
         // access authorize header to validate request
         const token = req.headers.authorization.split(" ")[1];
 

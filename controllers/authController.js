@@ -78,7 +78,10 @@ export async function register(req, res) {
                 });
                 //Now save the otp code here
                 app.locals.otp = code;
-              });
+              }).catch((err => {
+                
+                res.status(500).send({ success: false, message: err })
+              }));
             })
             .catch((error) =>
               res.status(500).send({ success: false, message: error })
