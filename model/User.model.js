@@ -32,7 +32,6 @@ export const UserSchema = new mongoose.Schema(
 				type: String,
 				required: false,
 				unique: true,
-				default: ""
 			},
 			about: {
 				type: String,
@@ -45,13 +44,17 @@ export const UserSchema = new mongoose.Schema(
 		},
 		password: {
 			type: String,
-			required: [true, "Please provide a password"],
 			unique: false,
 		},
 		email: { 
 			type: String,
 			required: [true, "Please provide a unique email"],
 			unique: true,
+		},
+		authType: { 
+			type: String,
+			required: [true, "Please provide a authentication type"],
+			default: "regular",
 		},
 		isVerified: {
 			type: Boolean,
@@ -101,6 +104,10 @@ export const UserSchema = new mongoose.Schema(
 					type: String,
 					required: false,
 				},
+				companyLogo: {
+					type: String,
+					required: false,
+				},
 				role: {
 					type: String,
 					required: false,
@@ -113,12 +120,16 @@ export const UserSchema = new mongoose.Schema(
 					type: String,
 					required: false,
 				},
+				workType: {
+					type: String,
+					required: false,
+				},
 				startDate: {
-					type: Date,
+					type: String,
 					required: false,
 				},
 				endate: {
-					type: Date,
+					type: String,
 					required: false,
 				},
 				stillHere: {
@@ -146,7 +157,7 @@ export const UserSchema = new mongoose.Schema(
 					required: false,
 				},
 				endate: {
-					type: Date,
+					type: String,
 					required: false,
 				},
 				stillSchooling: {

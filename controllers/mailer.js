@@ -51,14 +51,7 @@ export const registerMail = async (req, res) => {
 };
 
 export const sendVerificationCode = async (userEmail, verificationCode) => {
-	//   // Define the email message
-	//   const message = {
-	//     from: 'your_email@gmail.com',
-	//     to: email,
-	//     subject: 'Verify Your Email Address',
-	//     text: `Your verification code is: ${verificationCode}`,
-	//     html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`,
-	//   };
+
 	let message, subject;
 
 	var mail = {
@@ -88,6 +81,30 @@ export const sendVerificationCode = async (userEmail, verificationCode) => {
 		.sendMail(msg)
 		.then((res) => {
 		console.log(`EMAIL SENT RESPONSE:: ${verificationCode} `, res.response);
+			// return res.response
+			// 	.status(200)
+			// 	.send({ success: true, message: "Email sent successfully" });
+		})
+		.catch((error) => console.log("error: ", error));
+};
+
+
+export const sendSupportEmail = async (userEmail, ticketNo, title) => {
+
+	let msg = {
+		from: process.env.MAILER_ID,
+		to: userEmail,
+		subject: title,
+		html: `<p>Thank you for reaching out to us! We're here to help. <br/>Below is your ticket ID </p>` + ticketNo,
+	};
+
+	// Send the email message
+	//   const info = await transporter.sendMail(msg);
+	//   console.log(`Email sent: ${info.messageId}`);
+	transporter
+		.sendMail(msg)
+		.then((res) => {
+		console.log(`EMAIL SENT RESPONSE:: ${ticketNo} `, res.response);
 			// return res.response
 			// 	.status(200)
 			// 	.send({ success: true, message: "Email sent successfully" });

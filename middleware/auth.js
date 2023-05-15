@@ -16,7 +16,7 @@ export default async function Auth(req, res, next){
         next()
 
     } catch (error) {
-        res.status(401).json({ success: false, message : "Authentication Failed!"})
+        res.status(401).json({ success: false, message : "You are not authorized!"})
     }
 }
 
