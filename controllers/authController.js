@@ -62,7 +62,7 @@ export async function register(req, res) {
         .then((hashedPassword) => {
           const user = new User({
             password: hashedPassword,
-            email,
+            email: email,
           });
 
           // return save result as a response
@@ -70,7 +70,7 @@ export async function register(req, res) {
             .save()
             .then(async (result) => {
               //Now send email here
-              let code = await generateOTP();
+              let code = generateOTP();
               sendVerificationCode(email, code).then((val) => {
                 res.status(200).send({
                   success: true,
@@ -79,7 +79,6 @@ export async function register(req, res) {
                 //Now save the otp code here
                 app.locals.otp = code;
               }).catch((err => {
-                
                 res.status(500).send({ success: false, message: err })
               }));
             })
@@ -90,7 +89,7 @@ export async function register(req, res) {
         .catch((error) => {
           return res.status(500).send({
             success: false,
-            message: "Enable to hashed password",
+            message: error,
           });
         });
     }

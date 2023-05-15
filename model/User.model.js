@@ -31,7 +31,6 @@ export const UserSchema = new mongoose.Schema(
 			nin: {
 				type: String,
 				required: false,
-				unique: true,
 			},
 			about: {
 				type: String,
