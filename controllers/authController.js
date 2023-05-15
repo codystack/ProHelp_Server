@@ -10,6 +10,7 @@ import express from "express";
 import { OAuth2Client } from "google-auth-library";
 
 const app = express();
+
 const clientAndroid = new OAuth2Client(
   process.env.GOOGLE_AUTH_CLIENT_ID_ANDROID
 );
