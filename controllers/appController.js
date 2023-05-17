@@ -35,7 +35,7 @@ export async function addSupport(req, res) {
     if (!em)
       return res.status(404).json({
         success: false,
-        message: "The email does not exist on this platform!",
+        message: "The user does not exist on this platform!",
       });
     //Generate a ticket number
     const ticketId = v4();

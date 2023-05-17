@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import express from "express";
+import User from "../model/User.model";
 // import ENV from '../config.js'
 
 const app = express();
@@ -7,16 +8,25 @@ const app = express();
 /** auth middleware */
 export default async function Auth(req, res, next) {
   try {
-    const { type } = req.body;
+    const { email } = req.params;
     // access authorize header to validate request
     const token = req.headers.authorization.split(" ")[1];
 
-    console.log("TOKENER >> ", `${app.locals?.authType}`);
+    console.log("TOKENER >> ", `${email}`);
+
+    //Now use email to retrieve user
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        return res
+        .status(401)
+        .json({ success: false, message: "You are not a registered user!" });
+    }
 
     // retrive the user details for the logged in user
-    const decodedToken = await jwt.verify(
+    const decodedToken = jwt.verify(
       token,
-      app.locals?.authType === "google"
+      user.authType === "google"
         ? process.env.GOOGLE_AUTH_CLIENT_SECRET
         : process.env.JWT_SECRET
     );
