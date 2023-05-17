@@ -80,6 +80,9 @@ export async function register(req, res) {
                   });
                   //Now save the otp code here
                   app.locals.otp = code;
+
+                  //Save for uauth type
+                  app.locals.authType = "normal";
                 })
                 .catch((err) => {
                   res.status(500).send({ success: false, message: err });
@@ -153,6 +156,8 @@ export async function login(req, res) {
               process.env.JWT_SECRET,
               { expiresIn: "24h" }
             );
+
+            app.locals.authType = "normal";
 
             const { password, ...rest } = Object.assign({}, user.toJSON());
 
@@ -307,7 +312,12 @@ export async function resendOTP(req, res) {
     const { email, type } = req.query;
     app.locals.otp = null;
     let code = generateOTP();
-    sendVerificationCode(email, code, "", type === "register" ? "register" : "password").then((val) => {
+    sendVerificationCode(
+      email,
+      code,
+      "",
+      type === "register" ? "register" : "password"
+    ).then((val) => {
       res.status(200).send({
         success: true,
         message: "An OTP code has been sent to your email. ",
@@ -439,6 +449,8 @@ export async function getGoogleParams(req, res) {
       .catch((err) => {
         console.log("TOKOLATAS ", err);
       });
+
+    app.locals.authType = "google";
 
     console.log("TOKEN ICK", tic);
 
