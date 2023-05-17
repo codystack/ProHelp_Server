@@ -610,13 +610,13 @@ export const sendVerificationCode = async (userEmail, code, name, type) => {
                                   <p style="line-height: 160%; font-size: 14px">
                                     <span
                                       style="font-size: 18px; line-height: 28.8px"
-                                      >Thanks,</span
+                                      >Regards,</span
                                     >
                                   </p>
                                   <p style="line-height: 160%; font-size: 14px">
                                     <span
                                       style="font-size: 18px; line-height: 28.8px"
-                                      >FastQuid Team</span
+                                      >The ProHelp Team</span
                                     >
                                   </p>
                                 </div>
@@ -1073,7 +1073,7 @@ export const sendVerificationCode = async (userEmail, code, name, type) => {
                   overflow-wrap: break-word;
                   word-wrap: break-word;
                   word-break: break-word;
-                  background-color: #e21042;
+                  background-color: #0066f5;
                 "
               >
                 <div
@@ -1128,7 +1128,7 @@ export const sendVerificationCode = async (userEmail, code, name, type) => {
                               >
                                 <div
                                   style="
-                                    color: #0066f5;
+                                    color: #fff;
                                     line-height: 180%;
                                     text-align: center;
                                     word-wrap: break-word;
