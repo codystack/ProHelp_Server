@@ -164,7 +164,7 @@ export async function login(req, res) {
           .catch((error) => {
             return res.status(400).send({
               success: false,
-              message: "Password does not match",
+              message: "Incorrect user credentials. Try again.",
             });
           });
       })
