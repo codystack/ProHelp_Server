@@ -72,7 +72,7 @@ export async function register(req, res) {
             .then(async (result) => {
               //Now send email here
               let code = generateOTP();
-              sendVerificationCode(email, code).then((val) => {
+              sendVerificationCode(email, code, result.bio.fullname, "register").then((val) => {
                 res.status(200).send({
                   success: true,
                   message: "An OTP code has been sent to your email. ",
