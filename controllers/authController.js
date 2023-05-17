@@ -265,12 +265,12 @@ export async function getAllUsers(req, res, next) {
 
 export async function updateUser(req, res) {
   try {
-    const { id } = req.params;
+    const { email } = req.params;
 
-    if (id) {
+    if (email) {
       const body = req.body;
 
-      let usr = await User.findOneAndUpdate({ email: id }, body, {
+      let usr = await User.findOneAndUpdate({ email: email }, body, {
         new: true,
       });
 
