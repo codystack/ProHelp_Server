@@ -360,7 +360,7 @@ export async function verifyOTP(req, res) {
           });
         }); //Verify user
     } else {
-      return res.json({
+      return res.status(400).send({
         success: false,
         message: "The OTP code you entered is invalid",
       });
