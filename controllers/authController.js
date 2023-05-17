@@ -72,16 +72,18 @@ export async function register(req, res) {
             .then(async (result) => {
               //Now send email here
               let code = generateOTP();
-              sendVerificationCode(email, code, result.bio.fullname, "register").then((val) => {
-                res.status(200).send({
-                  success: true,
-                  message: "An OTP code has been sent to your email. ",
+              sendVerificationCode(email, code, result.bio.fullname, "register")
+                .then((val) => {
+                  res.status(200).send({
+                    success: true,
+                    message: "An OTP code has been sent to your email. ",
+                  });
+                  //Now save the otp code here
+                  app.locals.otp = code;
+                })
+                .catch((err) => {
+                  res.status(500).send({ success: false, message: err });
                 });
-                //Now save the otp code here
-                app.locals.otp = code;
-              }).catch((err => {
-                res.status(500).send({ success: false, message: err })
-              }));
             })
             .catch((error) =>
               res.status(500).send({ success: false, message: error })
@@ -357,11 +359,13 @@ export async function verifyOTP(req, res) {
             message: "Account verification failed!",
           });
         }); //Verify user
+    } else {
+      return res.json({
+        success: false,
+        message: "The OTP code you entered is invalid",
+      });
     }
-    return res.status(400).send({
-      success: false,
-      message: "The OTP code you entered is invalid",
-    });
+    //
   } catch (error) {
     console.log("ERROR VERIFICATION", error);
     return res.status(401).send({ error });
