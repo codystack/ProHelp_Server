@@ -11,6 +11,8 @@ export default async function Auth(req, res, next) {
     // access authorize header to validate request
     const token = req.headers.authorization.split(" ")[1];
 
+    console.log("TOKENER >> ", `${app.locals?.authType}`);
+
     // retrive the user details for the logged in user
     const decodedToken = await jwt.verify(
       token,
