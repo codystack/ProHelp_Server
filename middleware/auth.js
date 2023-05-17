@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import express from "express";
-import User from "../model/User.model";
+import User from "../model/User.model.js";
 // import ENV from '../config.js'
 
 const app = express();
