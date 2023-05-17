@@ -304,10 +304,10 @@ function generateOTP() {
 
 export async function resendOTP(req, res) {
   try {
-    const { email } = req.query;
+    const { email, type } = req.query;
     app.locals.otp = null;
     let code = generateOTP();
-    sendVerificationCode(email, code).then((val) => {
+    sendVerificationCode(email, code, "", type === "register" ? "register" : "password").then((val) => {
       res.status(200).send({
         success: true,
         message: "An OTP code has been sent to your email. ",
