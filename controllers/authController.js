@@ -343,32 +343,37 @@ export async function verifyOTP(req, res) {
       app.locals.otp = null; // reset the OTP value
       app.locals.resetSession = true; // start session for reset password
 
-      await User.updateOne({ isVerified: true })
-        .then(async (val) => {
-          let user = await User.findOne({ email });
-
-          // create jwt token
-          const token = jwt.sign(
+      User.findOneAndUpdate(
+        { email: email },
+        { $set: { isVerified: true } },
+        {
+          new: true,
+        }
+      )
+        .then((usr) => {
+          const jwtToken = jwt.sign(
             {
-              userId: user._id,
-              username: user.email,
+              userId: usr._id,
+              username: usr.email,
             },
             process.env.JWT_SECRET,
             { expiresIn: "24h" }
           );
 
-          return res.status(200).send({
+          // const { password, ...rest } = Object.assign({}, usr.toJSON());
+
+          res.status(200).send({
             message: "Account verification successful!",
             success: true,
-            token: token,
+            token: jwtToken,
           });
+
         })
-        .catch((err) => {
-          return res.status(400).send({
-            success: false,
-            message: "Account verification failed!",
-          });
-        }); //Verify user
+        .catch((error) => {
+          console.log("ERROR UPDA >> ", `${error}`);
+          res.status(500).send({ message: "Account verification failed!", success: false });
+        });
+
     } else {
       return res.status(400).send({
         success: false,

@@ -31,12 +31,15 @@ router.route('/resendOTP').get(controller.resendOTP, ) // verify generated OTP
 router.route('/createResetSession').get(controller.createResetSession) // reset all the variables
 router.route('/logout/:email').get(Auth, controller.logout); //Log user out
 router.route('/search/:key').get(appController.searcher); //Search endpoint
-router.route('/users/savedPros/:email').get(Auth, appController.getLikedUsers); //Log user out
+router.route('/users/savedPros/:email').get(Auth, appController.getLikedUsers); //get saved pros/recruiters for user
+router.route('/users/connections/:email').get(Auth, appController.getConnections); //get all connections of a user
+
 
 /** PUT Methods */
 router.route('/updateuser/:email').put(Auth, controller.updateUser); // is use to update the user profile
 router.route('/resetPassword').put(controller.verifyUser, controller.resetPassword); // use to reset password
-router.route('/likeUser/:email').put(Auth, appController.saveWishlist);
+router.route('/likeUser/:email').put(Auth, appController.saveWishlist); // Like/Unlike user
+router.route('/connection/:email').put(Auth, appController.saveConnection); //Add connection after payment
 
 
 export default router;

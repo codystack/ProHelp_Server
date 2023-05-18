@@ -339,3 +339,72 @@ export async function searcher(req, res) {
     throw new Error(error);
   }
 }
+
+export async function saveConnection(req, res) {
+  const { guestId, guestName, userId } = req.body;
+  try {
+    if (!userId)
+      return res
+        .status(404)
+        .send({ success: false, message: "Account does not exist" });
+
+    await User.findByIdAndUpdate(
+      guestId,
+      {
+        $push: { connections: userId },
+      },
+      { new: true }
+    );
+
+    let usr = await User.findByIdAndUpdate(
+      userId,
+      {
+        $push: { connections: guestId },
+      },
+      { new: true }
+    );
+
+    const { password, ...rest } = Object.assign({}, usr.toJSON());
+
+    return res.status(200).send({
+      success: false,
+      message: "Successfully connected to " + guestName,
+      data: rest,
+    });
+  } catch (error) {
+    console.log("ERROR LIKING >>> ", error);
+    throw new Error(error);
+  }
+}
+
+export async function getConnections(req, res) {
+  const { email } = req.params;
+  try {
+    if (!email)
+      res
+        .status(404)
+        .send({ success: false, message: "Account does not exist" });
+
+    User.findOne({ email: email })
+      .then((user) => {
+        console.log("STR ARR ", `${user.connections}`);
+        const stringArray = user.connections.map((objectId) =>
+          objectId.toString()
+        );
+        console.log("CONNECTIONS  ", user.connections.toString());
+        // console.log("STR ARR ", stringArray);
+
+        User.find({ _id: { $in: stringArray } })
+          .then((rs) => {
+            // console.log("STR RES ", rs);
+            res
+              .status(200)
+              .send({ success: true, message: "Success", data: rs });
+          })
+          .catch((error) => console.log("ERR >> ", error));
+      })
+      .catch((err) => console.log("ERRORRO >> ", err));
+  } catch (error) {
+    throw new Error(error);
+  }
+}
