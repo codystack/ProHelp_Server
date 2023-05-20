@@ -44,7 +44,7 @@ export const UserSchema = new mongoose.Schema(
 		},
 		password: {
 			type: String,
-			unique: false,
+			required: [true, "Please provide a password"],
 		},
 		email: { 
 			type: String,
