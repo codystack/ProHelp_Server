@@ -358,8 +358,8 @@ export const sendVerificationCode = async (userEmail, code, name, type) => {
                                     <strong
                                       >${
                                         type !== 'register'
-                                          ? 'P A S S W O R D\t   R E S E T\t   R E Q U E S T'
-                                          : 'T H A N K S\t   F O R\t   S I G N I N G\t   U P!'
+                                          ? 'PASSWORD\t RESET\t REQUEST'
+                                          : 'THANKS\t FOR\t SIGNING\t UP!'
                                       }</strong
                                     >
                                   </p>

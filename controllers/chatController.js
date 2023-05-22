@@ -124,7 +124,7 @@ export async function postMessage(req, res) {
       }
     );
 
-    global.io.in(chatId).emit("new-message", { message: post });
+    global.io.in(chatId).emit("new-message", { senderId: sender?.id, message: post });
     // console.log("CHECK  GLOBAL SOCKET INSTANCE ", JSON.stringify(post));
     return res.status(200).send({ success: true, post });
     // const aggregate = await Message.aggregate([
