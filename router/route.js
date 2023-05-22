@@ -41,7 +41,10 @@ router.route('/likeUser/:email').put(Auth, appController.saveWishlist); // Like/
 router.route('/connection/:email').put(Auth, appController.saveConnection); //Add connection after payment
 router.route('/users/savedPros/:email').get(Auth, appController.getLikedUsers); //get saved pros/recruiters for user
 router.route('/users/connections/:email').get(Auth, appController.getConnections); //get all connections of a user
-
+router.route('/review/create/:email').post(Auth, appController.saveReview); //save a new review
+router.route('/review/delete/:email').put(Auth, appController.deleteReview); //Delete/Take down a review
+router.route('/review/byUser/:email').get(Auth, appController.getReviewsByUser); //get all user's reviews
+router.route('/review/reply/:email').put(Auth, appController.replyReview); //reply a specific review
 
 
                         // ***** APPLICATION ***** //

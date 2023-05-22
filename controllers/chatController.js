@@ -255,7 +255,7 @@ export async function markAsRead(req, res) {
       }
     );
 
-    global.io.sockets.in(chatId).emit("message-read", { message: post });
+    global.io.in(chatId).emit("message-read", { message: post });
 
     return res
       .status(200)

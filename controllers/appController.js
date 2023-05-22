@@ -3,6 +3,7 @@ import { v4 } from "uuid";
 import { sendSupportEmail } from "./mailer.js";
 import User from "../model/User.model.js";
 import Alert from "../model/Alert.model.js";
+import Review from "../model/Review.model.js";
 // import SupportModel from "../model/Support.model";
 
 /** middleware for verify user */
@@ -406,5 +407,265 @@ export async function getConnections(req, res) {
       .catch((err) => console.log("ERRORRO >> ", err));
   } catch (error) {
     throw new Error(error);
+  }
+}
+
+export async function saveReview(req, res) {
+  const { reviewer, comment, userId, rating, email } = req.body;
+  try {
+    const findReviewer = User.findOne({ email });
+    if (!findReviewer) {
+      return res.status(404).send({
+        success: false,
+        message: "User does not exist on our platform",
+      });
+    }
+
+    const findUser = await User.findOne({ _id: userId });
+    if (!findUser) {
+      return res.status(404).send({
+        success: false,
+        message:
+          "You are trying to review a user that does not exist on our platform",
+      });
+    }
+
+    const review = await new Review({
+      comment: comment,
+      rating: rating,
+      reviewer: reviewer,
+      userId: userId,
+    });
+
+    review
+      .save()
+      .then(async (result) => {
+        //Recalculate rating for this user
+        var ratingsSum = 0;
+        var ratingsVal = 0;
+
+        User.findOne({ _id: userId }).then(async (val) => {
+          let existingReviews = val?.reviews;
+
+          console.log("CURRENT REVIEWS ", existingReviews);
+
+          existingReviews?.forEach((elem) => {
+            ratingsSum = ratingsSum + elem?.rating;
+
+            console.log("RATING ", elem?.rating);
+          });
+          let length = existingReviews?.length + 1;
+          let netSum = ratingsSum + rating;
+          ratingsVal = netSum / length;
+
+          console.log("RATING ", rating);
+          console.log("RATING LENGTH ", length);
+          console.log("RATING SUM ", netSum);
+          console.log("RATING NET VALUE >> ", ratingsVal);
+
+          //Now update user's profile
+          let usr = await User.findByIdAndUpdate(
+            userId,
+            {
+              $push: {
+                reviews: {
+                  _id: result._id,
+                  reviewer: reviewer.id,
+                  rating: rating,
+                },
+              },
+              $set: {
+                rating: ratingsVal,
+              },
+            },
+            { new: true }
+          );
+
+          // remove password and return user's profile
+          const { password, ...rest } = Object.assign({}, usr.toJSON());
+
+          global.io.in(userId).emit("new-review", {
+            message: "Someone just reviewed you",
+            data: rest,
+          });
+
+          res.status(200).send({
+            success: true,
+            message: "Your review was successful",
+          });
+        });
+      })
+      .catch((error) => {
+        console.log("REVIEW ER R>> ", error);
+        return res.status(500).send({ success: false, message: error });
+      });
+  } catch (error) {
+    console.log("REVIEW ERR>> ", error);
+    return res.status(500).send({ success: false, message: error });
+  }
+}
+
+export async function deleteReview(req, res) {
+  const { userId, reviewerId, reviewId, rating } = req.body;
+  const { email } = req.params;
+
+  // console.log("PAYLOAD", reviewerId);
+  // console.log("PAYLOAD", userId);
+  // console.log("PAYLOAD", reviewId);
+  // console.log("PAYLOAD", rating);
+
+  try {
+    const findReviewer = User.findOne({ email });
+    if (!findReviewer) {
+      return res.status(404).send({
+        success: false,
+        message: "User does not exist on our platform",
+      });
+    }
+    
+    // console.log("USER DATA <<<>>> ", findReviewer);
+
+    Review.deleteOne({
+      _id: reviewId,
+    }).then((val) => {
+      var ratingsSum = 0;
+      var ratingsVal = 0;
+
+      // console.log("PAYLOAD", val);
+
+      //Update this users reviews length
+      // User.findByIdAndUpdate(
+      //   userId,
+      //   {
+      //     $pull: {
+      //       reviews: {
+      //         _id: reviewId,
+      //         reviewer: reviewerId,
+      //         rating: rating,
+      //       },
+      //     },
+      //   },
+      //   { new: true }
+      // ).then(async (val) => {
+      //   let existingReviews = val?.reviews;
+
+      //   console.log("CURRENT REVIEWS ", existingReviews);
+
+      //   existingReviews?.forEach((elem) => {
+      //     ratingsSum = ratingsSum + elem?.rating;
+
+      //     console.log("RATING ", elem?.rating);
+      //   });
+
+      //   let length = existingReviews?.length;
+      //   ratingsVal = ratingsSum / length;
+
+      //   console.log("RATING ", rating);
+      //   console.log("RATING LENGTH ", length);
+      //   console.log("RATING SUM ", ratingsSum);
+      //   console.log("RATING NET VALUE >> ", ratingsVal);
+
+      //   //Now remove review from user's reviews
+      //   let usr = await User.findByIdAndUpdate(
+      //     { email: val?.email },
+      //     { $set: { rating: ratingsVal } },
+      //     {
+      //       new: true,
+      //     }
+      //   );
+
+      //   // remove password and return user's profile
+      //   const { password, ...rest } = Object.assign({}, usr.toJSON());
+
+      //   global.io.in(userId).emit("review-updated", {
+      //     message: "Someone just updated a review about you",
+      //     data: rest,
+      //   });
+
+      //   res.status(200).send({
+      //     success: true,
+      //     message: "Review successfully deleted",
+      //   });
+      // });
+    });
+  } catch (error) {
+    console.log("REVIEW DELETE ERR >> ", error?.message);
+    return res.status(500).send({ success: false, message: error });
+  }
+}
+
+export async function replyReview(req, res) {
+  const { reviewId, reviewerId, replyBody } = req.body;
+
+  try {
+    const reviewer = await User.findOne({ _id: reviewerId });
+    if (!reviewer) {
+      return res.status(404).send({
+        success: false,
+        message: "User does not exist on this platform!",
+      });
+    }
+
+    const review = await Review.findOne({ _id: reviewId });
+    if (!review) {
+      return res
+        .status(404)
+        .send({ success: false, message: "Review does not exist!" });
+    }
+
+    let rep = await Review.findOneAndUpdate(
+      { _id: reviewId },
+      { $set: { reply: replyBody } },
+      {
+        new: true,
+      }
+    );
+
+    return res.status(200).send({
+      success: true,
+      message: "Reply sent successfully",
+      data: rep,
+    });
+  } catch (error) {
+    console.log("REVIEW REPLY ERROR >> ", error);
+    return res.status(500).send({ success: false, message: error });
+  }
+}
+
+export async function getReviewsByUser(req, res) {
+  try {
+    const { userId } = req.query;
+    const { email } = req.params;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User does not exist on our platform!",
+      });
+    }
+
+    const options = {
+      page: parseInt(req.query.page) || 0,
+      limit: parseInt(req.query.limit) || 25,
+    };
+
+    const reviews = await Review.aggregate([
+      { $match: { userId } },
+      { $sort: { createdAt: -1 } },
+
+      // apply pagination
+      { $skip: options.page * options.limit },
+      { $limit: options.limit },
+      { $sort: { createdAt: 1 } },
+    ]);
+
+    return res.status(200).send({
+      success: true,
+      data: reviews,
+    });
+  } catch (error) {
+    console.log("REVIEW ERR>> ", error);
+    return res.status(500).send({ success: false, message: error });
   }
 }
