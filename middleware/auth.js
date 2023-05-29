@@ -12,7 +12,7 @@ export default async function Auth(req, res, next) {
     // access authorize header to validate request
     const token = req.headers.authorization.split(" ")[1];
 
-    console.log("TOKENER >> ", `${email}`);
+    // console.log("TOKENER >> ", `${email}`);
 
     //Now use email to retrieve user
     const user = await User.findOne({ email });
