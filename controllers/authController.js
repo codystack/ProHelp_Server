@@ -70,7 +70,7 @@ export async function register(req, res) {
           user
             .save()
             .then(async (result) => {
-              //Now send email here
+              //Now send email here 
               let code = generateOTP();
               sendVerificationCode(email, code, result.bio.fullname, "register")
                 .then((val) => {

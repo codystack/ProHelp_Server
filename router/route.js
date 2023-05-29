@@ -25,7 +25,7 @@ router.route('/chat/initiate/:email').post(Auth, chatController.initiateChat);
 router.route('/chat/all/:email').get(Auth, chatController.getChatsByUser);
 router.route('/chat/message/new/:email').post(Auth, chatController.postMessage)
 router.route('/chat/message/all/:email').get(Auth, chatController.getConversationByRoomId)
-router.route('/chat/message/read/:email').put(Auth, chatController.markAsRead); //Set mark as read
+router.route('/chat/message/delete/:email').put(Auth, chatController.deleteMessage); //Set mark as read
 
 
 

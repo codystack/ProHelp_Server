@@ -24,6 +24,7 @@ export const ChatSchema = mongoose.Schema(
       type: String,
       default: "",
     },
+    unreadMsgs: [],
     chatInitiator: {
       type: String,
     },

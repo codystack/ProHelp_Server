@@ -118,13 +118,24 @@ export async function postMessage(req, res) {
 
     await Chat.findOneAndUpdate(
       { _id: chatId },
-      { $set: { recentMessage: message } },
+      {
+        $push: {
+          unreadMsgs: {
+            senderId: sender?.id,
+            message: message,
+            receiverId: receiver?.id,
+          },
+        },
+        $set: { recentMessage: message },
+      },
       {
         new: true,
       }
     );
 
-    global.io.in(chatId).emit("new-message", { senderId: sender?.id, message: post });
+    global.io
+      .in(chatId)
+      .emit("new-message", { senderId: sender?.id, message: post });
     // console.log("CHECK  GLOBAL SOCKET INSTANCE ", JSON.stringify(post));
     return res.status(200).send({ success: true, post });
     // const aggregate = await Message.aggregate([
@@ -232,34 +243,41 @@ export async function getConversationByRoomId(req, res) {
   }
 }
 
-export async function markAsRead(req, res) {
+export async function deleteMessage(req, res) {
   try {
-    const { chatId } = req.params;
+    const { messageId, chatId, sender } = req.body;
 
     // const chat = await ChatRoomModel.getChatRoomByRoomId(chatId);
-    const chat = await this.findOne({ _id: chatId });
+    const msg = await Message.findOne({ _id: messageId });
 
-    if (!chat) {
+    if (!msg) {
       return res.status(400).json({
         success: false,
-        message: "No chat exists for this id",
+        message: "No conversation exists for this id",
       });
     }
 
-    // const currentLoggedUser = req.userId;
-    let result = await Chat.findOneAndUpdate(
-      { _id: chatId },
-      { $set: { isRead: true } },
+    // const result = await Message.deleteOne({ _id: messageId });
+
+    let result = await Message.findOneAndUpdate(
+      { _id: messageId },
+      { $set: { isDeleted: true } },
       {
         new: true,
       }
     );
 
-    global.io.in(chatId).emit("message-read", { message: post });
+    global.io
+      .in(chatId)
+      .emit("is-deleted", { messageId: messageId, message: result });
 
     return res
       .status(200)
-      .json({ success: true, message: "You just read message", data: result });
+      .json({
+        success: true,
+        message: "You just deleted a conversation",
+        data: result,
+      });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ success: false, error });

@@ -8,7 +8,7 @@ import http from "http";
 import connect from "./database/conn.js";
 import router from "./router/route.js";
 import { Server } from "socket.io";
-import WebSockets from "./utils/websocket.mjs";
+import WebSockets from "./utils/websocket.js";
 // import indexRouter from "./router/index.js";
 
 const app = express();

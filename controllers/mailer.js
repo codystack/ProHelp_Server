@@ -57,9 +57,9 @@ export const sendVerificationCode = async (userEmail, code, name, type) => {
   let msg = {
     from: process.env.MAILER_ID,
     to: userEmail,
-    subject: type === "register" ? "Account Verification" : "Password Reset Request",
-    html:
-    `<body
+    subject:
+      type === "register" ? "Account Verification" : "Password Reset Request",
+    html: `<body
     class="clean-body u_body"
     style="
       margin: 0;
@@ -197,12 +197,12 @@ export const sendVerificationCode = async (userEmail, code, name, type) => {
                                         border: none;
                                         height: auto;
                                         float: none;
-                                        width: 7.5%;
-                                        max-width: 156.8px;
+                                        width: 15%;
+                                        max-width: 256px;
                                       "
                                       width="75.8"
                                     />
-                                    <h1 style="padding-left: 16px">
+                                    <h1 style="padding-left: 21px">
                                       ProHelp
                                     </h1>
                                   </div>
@@ -357,9 +357,9 @@ export const sendVerificationCode = async (userEmail, code, name, type) => {
                                   <p style="font-size: 14px; line-height: 140%">
                                     <strong
                                       >${
-                                        type !== 'register'
-                                          ? 'PASSWORD\t RESET\t REQUEST'
-                                          : 'THANKS\t FOR\t SIGNING\t UP!'
+                                        type !== "register"
+                                          ? "PASSWORD\t RESET\t REQUEST"
+                                          : "THANKS\t FOR\t SIGNING\t UP!"
                                       }</strong
                                     >
                                   </p>
@@ -406,9 +406,9 @@ export const sendVerificationCode = async (userEmail, code, name, type) => {
                                             font-size: 28px;
                                           "
                                           >${
-                                            type !== 'register'
-                                              ? 'Verify It\'s You'
-                                              : 'Verify Your Account'
+                                            type !== "register"
+                                              ? "Verify It's You"
+                                              : "Verify Your Account"
                                           }</span
                                         ></strong
                                       >
@@ -501,14 +501,18 @@ export const sendVerificationCode = async (userEmail, code, name, type) => {
                                   <p style="font-size: 14px; line-height: 160%">
                                     <span
                                       style="font-size: 22px; line-height: 35.2px"
-                                      >Hi ${type === 'register' ? name : ''},
+                                      >${
+                                        type !== "register"
+                                          ? "Hi " + name + ","
+                                          : ""
+                                      }
                                     </span>
                                   </p>
                                   <p style="font-size: 14px; line-height: 160%">
                                     <span
                                       style="font-size: 18px; line-height: 28.8px"
                                       >${
-                                        type !== 'register'
+                                        type !== "register"
                                           ? "You're almost about to access that loan you have been longing for, but first confirm that your work email is genuine!"
                                           : "You're almost ready to get started. Please use the code below to verify your account and enjoy our platform!"
                                       }  </span

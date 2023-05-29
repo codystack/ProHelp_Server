@@ -13,11 +13,6 @@ export const UserSchema = new mongoose.Schema(
         default: "",
         required: false,
       },
-      address: {
-        type: String,
-        default: "",
-        required: false,
-      },
       gender: {
         type: String,
         default: "Male",
@@ -41,6 +36,38 @@ export const UserSchema = new mongoose.Schema(
         type: String,
         default: "",
       },
+    },
+    address: {
+      street: {
+        type: String,
+        default: "",
+        required: false,
+      },
+      city: {
+        type: String,
+        default: "",
+        required: false,
+      },
+      state: {
+        type: String,
+        default: "",
+        required: false,
+      },
+      country: {
+        type: String,
+        default: "",
+        required: false,
+      },
+      zipCode: {
+        type: String,
+        default: "",
+        required: false,
+      },
+    },
+    profession: {
+      type: String,
+      default: "",
+      required: false,
     },
     password: {
       type: String,
